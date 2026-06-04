@@ -46,12 +46,13 @@ class gui:
 
     def row_creation(self):
         self.table_create.pack_forget()
-        row_list = []
         if self.viewedData == True:
             self.datatypes.pack_forget()
             self.viewedData = False
+        self.last_row = False
+
+        self.wait_var = tk.IntVar()
         for i in range(self.row_amount):
-            button1.config(state="disabled")
             if i != 0:
                 self.row_create.pack_forget()
             self.row_create = tk.Frame(self.window)
@@ -60,21 +61,40 @@ class gui:
             label2 = tk.Label(self.row_create, text=f"Row {i}")
 
 
-            entry1 = tk.Entry(self.row_create, width=20)
+            self.rowentry = tk.Entry(self.row_create, width=20)
 
             button1 = tk.Button(self.row_create, text="View Datatypes", width=20,height=5,anchor="center", command=self.datatype_screen)
+
+            button2 = tk.Button(self.row_create, text="Enter", width=20,height=5,anchor="center", command=self.row_list_build)
             
+            if i == (self.row_amount-1):
+                self.last_row = True
 
             label1.grid(row=0, column=0, columnspan=3, sticky="n", pady=10)
             label2.grid(row=2, column=0, columnspan=3, sticky="n", pady=10)
 
-            entry1.grid(row=3,column=0,columnspan=3,sticky="n",pady=10)
+            self.rowentry.grid(row=3,column=0,columnspan=3,sticky="n",pady=10)
 
             button1.grid(row=1, column=0, columnspan=3, sticky="n", pady=10)
+            button2.grid(row=4,column=0,columnspan=3,sticky="n",pady=10)
 
             self.row_create.pack()
 
-            self.row_create.wait_variable()
+            button1.wait_variable(self.wait_var)
+
+    def row_list_build(self):
+        self.row_list = []
+        row_value = self.rowentry.get()
+        self.row_list.append(row_value)
+        if self.last_row == True:
+            myDB.create_table(self.table_name,self.row_list,self.id_bool)
+            print(f"You have created a table with the name {self.table_name}, {self.row_amount} rows and {self.id_bool} ID autoincrement")
+            self.row_create.pack_forget()
+            self.__init__()
+        else:
+            self.wait_var.set(1)
+
+
     
     def datatype_screen(self):
             self.row_create.pack_forget()
