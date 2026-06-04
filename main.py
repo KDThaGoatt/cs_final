@@ -45,6 +45,7 @@ class gui:
         
 
     def row_creation(self):
+        self.row_list = []
         self.table_create.pack_forget()
         if self.viewedData == True:
             self.datatypes.pack_forget()
@@ -59,9 +60,12 @@ class gui:
 
             label1 = tk.Label(self.row_create, text="Enter the title of your row, followed by the datatype in the format: title, datatype")
             label2 = tk.Label(self.row_create, text=f"Row {i}")
+            label3 = tk.Label(self.row_create, text="Enter the name of your row")
+            label4 = tk.Label(self.row_create, text="Enter the datatype of your row")
 
 
             self.rowentry = tk.Entry(self.row_create, width=20)
+            self.row_datatype_entry = tk.Entry(self.row_create, width=20)
 
             button1 = tk.Button(self.row_create, text="View Datatypes", width=20,height=5,anchor="center", command=self.datatype_screen)
 
@@ -72,22 +76,27 @@ class gui:
 
             label1.grid(row=0, column=0, columnspan=3, sticky="n", pady=10)
             label2.grid(row=2, column=0, columnspan=3, sticky="n", pady=10)
+            label3.grid(row=3, column=0, columnspan=3, sticky="n", pady=10)
+            label4.grid(row=5, column=0, columnspan=3, sticky="n", pady=10)
 
-            self.rowentry.grid(row=3,column=0,columnspan=3,sticky="n",pady=10)
+            self.rowentry.grid(row=4,column=0,columnspan=3,sticky="n",pady=10)
+            self.row_datatype_entry.grid(row=6,column=0,columnspan=3,sticky="n",pady=10)
 
             button1.grid(row=1, column=0, columnspan=3, sticky="n", pady=10)
-            button2.grid(row=4,column=0,columnspan=3,sticky="n",pady=10)
+            button2.grid(row=7,column=0,columnspan=3,sticky="n",pady=10)
 
             self.row_create.pack()
 
             button1.wait_variable(self.wait_var)
 
     def row_list_build(self):
-        self.row_list = []
-        row_value = self.rowentry.get()
-        self.row_list.append(row_value)
+        row_name = self.rowentry.get()
+        row_datatype = self.row_datatype_entry.get()
+        self.row_list.append(row_name)
+        self.row_list.append(row_datatype)
+        print(self.row_list)
         if self.last_row == True:
-            myDB.create_table(self.table_name,self.row_list,self.id_bool)
+            myDB.create_table(self,self.table_name,self.row_list,self.id_bool)
             print(f"You have created a table with the name {self.table_name}, {self.row_amount} rows and {self.id_bool} ID autoincrement")
             self.row_create.pack_forget()
             self.__init__()
