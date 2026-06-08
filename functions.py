@@ -5,9 +5,6 @@ class myDB:
     def create_table(self, table, rows, id_auto):
         # takes a list in the format [rowname, valuetype, rowname, valuetype, ...]
         # and converts it into a string in the form (rowname valuetype, rowname valuetype, ...)
-        file = 'dbase.db'
-        connection = sqlite3.connect(file)
-        cursor = connection.cursor()
         query_build = ''
         first_part=''
         for i in range(0, len(rows), 2):
@@ -20,10 +17,10 @@ class myDB:
             query = f'create table if not exists {table} (id integer primary key autoincrement, {first_part}{query_build});'
         else:
             query = f'create table if not exists {table} ({first_part}{query_build});'
-        cursor.execute(query)
+        self.cursor.execute(query)
     
-    def add_entries(self, table, rows, values):
-        query = f'insert into {table} ({rows}) values ({values});'
+    def add_entries(self, table, row_name, values):
+        query = f'insert into {table} ({row_name}) values ({values});'
         self.cursor.execute(query)
 
     def edit_entries(self, table, row, value, identifier, id_value):

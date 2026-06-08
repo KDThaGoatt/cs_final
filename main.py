@@ -58,7 +58,7 @@ class gui:
                 self.row_create.pack_forget()
             self.row_create = tk.Frame(self.window)
 
-            label1 = tk.Label(self.row_create, text="Enter the title of your row, followed by the datatype in the format: title, datatype")
+            label1 = tk.Label(self.row_create, text="Enter the title and datatype of your row")
             label2 = tk.Label(self.row_create, text=f"Row {i}")
             label3 = tk.Label(self.row_create, text="Enter the name of your row")
             label4 = tk.Label(self.row_create, text="Enter the datatype of your row")
@@ -90,16 +90,21 @@ class gui:
             button1.wait_variable(self.wait_var)
 
     def row_list_build(self):
+        db_create = myDB()
         row_name = self.rowentry.get()
         row_datatype = self.row_datatype_entry.get()
         self.row_list.append(row_name)
         self.row_list.append(row_datatype)
         print(self.row_list)
         if self.last_row == True:
-            myDB.create_table(self,self.table_name,self.row_list,self.id_bool)
-            print(f"You have created a table with the name {self.table_name}, {self.row_amount} rows and {self.id_bool} ID autoincrement")
+            db_create.create_table(self.table_name,self.row_list,self.id_bool)
+            if self.id_bool == True:
+                print(f"You have created a table with the name {self.table_name}, {self.row_amount} rows and ID autoincrement")
+            if self.id_bool == False:
+                print(f"You have created a table with the name {self.table_name}, {self.row_amount} rows and no ID autoincrement")
+
             self.row_create.pack_forget()
-            self.__init__()
+            self.main_menu.pack()
         else:
             self.wait_var.set(1)
 
@@ -148,6 +153,8 @@ class gui:
             self.datatypes.pack()
             
             
+    def add_entry(self):
+        
 
 
 
