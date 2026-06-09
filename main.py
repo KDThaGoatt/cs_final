@@ -115,7 +115,7 @@ class gui:
 
             self.datatypes = tk.Frame(self.window)
             
-            label1 = tk.Label(self.datatypes, text="Datatypes:")
+            label1 = tk.Label(self.datatypes, text="Datatypes")
             label2 = tk.Label(self.datatypes, text="INT / BIGINT: Whole numbers")
             label3 = tk.Label(self.datatypes, text="DECIMAL / NUMERIC: Fixed point fractional numbers (exact)")
             label4 = tk.Label(self.datatypes, text="FLOAT / REAL: Floating point fraction numbers (inexact)")
@@ -154,8 +154,27 @@ class gui:
             
             
     def add_entry(self):
+        #Enter table name and row name then when you press the button it will take you to a page to input a value which will tell you the datatype of the row
+        self.main_menu.pack_forget()
+        self.add_entries = tk.Frame(self.window)
+
+        label1 = tk.Label(self.add_entries, text="Enter the title of the table you want to add an entry to")
+        entry1 = tk.Entry(self.add_entries, width=20)
+        label2 = tk.Label(self.add_entries, text="Enter the row you want to insert into")
+        entry2 = tk.Entry(self.add_entries, width=20)
+        button1 = tk.Button(self.add_entries, text="Enter", width=20,height=5,anchor="center")
         
 
+        label1.grid(row=0,column=0,columnspan=3,sticky="n",pady=10)
+        entry1.grid(row=1,column=0,columnspan=3,sticky="n",pady=10)
+        label2.grid(row=2,column=0,columnspan=3,sticky="n",pady=10)
+        entry2.grid(row=3,column=0,columnspan=3,sticky="n",pady=10)
+        button1.grid(row=4,column=0,columnspan=3,sticky="n",pady=10)
+
+        self.add_entries.pack()
+
+    def insert_value(self):
+        query = "select type from pragma"
 
 
     def __init__(self):
@@ -170,7 +189,7 @@ class gui:
         label1 = tk.Label(self.main_menu, text="Main Menu", font=("Arial", 16))
 
         button1 = tk.Button(self.main_menu, text="Create Tables", width=20, height=5, anchor="center", command=self.create_table)
-        button2 = tk.Button(self.main_menu, text="Add Entries", width=20, height=5, anchor="center")
+        button2 = tk.Button(self.main_menu, text="Add Entries", width=20, height=5, anchor="center", command=self.add_entry)
         button3 = tk.Button(self.main_menu, text="Edit Entries", width=20, height=5, anchor="center")
         button4 = tk.Button(self.main_menu, text="Search For Entries", width=20, height=5, anchor="center")
 

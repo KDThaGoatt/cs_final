@@ -36,6 +36,13 @@ class myDB:
         self.cursor.execute(query)
         result = self.cursor.fetchall()
 
+    def datatype_get(self,table,col_name):
+        self.cursor.execute(f"PRAGMA table_info({table})")
+        columns = self.cursor.fetchall()
+        for col in columns:
+            if col[1] == col_name:
+                return col[2]
+
 
     def __init__(self):
         file = 'dbase.db'
