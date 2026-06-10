@@ -11,8 +11,8 @@ class gui:
 
         label1 = tk.Label(self.table_create, text="Enter the name for your table")
         self.name_entry = tk.Entry(self.table_create, width=20)
-        label2 = tk.Label(self.table_create, text="How many rows are in your table? (Integer)")
-        self.rows_entry = tk.Entry(self.table_create, width=20)
+        label2 = tk.Label(self.table_create, text="How many columns are in your table? (Integer)")
+        self.column_entry = tk.Entry(self.table_create, width=20)
         label3 = tk.Label(self.table_create, text="ID autoincrement? (type True or False)")
         self.id_entry = tk.Entry(self.table_create, width=20)
 
@@ -21,7 +21,7 @@ class gui:
         label1.grid(row=0, column=0, columnspan=3, sticky="n", pady=10)
         self.name_entry.grid(row=1,column=0,columnspan=3,sticky="n",pady=10)
         label2.grid(row=2, column=0, columnspan=3, sticky="n", pady=10)
-        self.rows_entry.grid(row=3,column=0,columnspan=3,sticky="n",pady=10)
+        self.column_entry.grid(row=3,column=0,columnspan=3,sticky="n",pady=10)
         label3.grid(row=4, column=0, columnspan=3, sticky="n", pady=10)
         self.id_entry.grid(row=5,column=0,columnspan=3,sticky="n",pady=10)
         button1.grid(row=6,column=0,columnspan=3,sticky="n",pady=10)
@@ -34,76 +34,75 @@ class gui:
         self.viewedData = False
         self.table_name = self.name_entry.get()
         try:
-            self.row_amount = int(self.rows_entry.get())
+            self.column_amount = int(self.column_entry.get())
         except:
             print("Non integer inputted")
         try:
             self.id_bool = bool(self.id_entry.get())
         except:
             print("Non Bool value inputted")
-        self.row_creation()
+        self.column_creation()
         
 
-    def row_creation(self):
-        self.row_list = []
+    def column_creation(self):
+        self.col_list = []
         self.table_create.pack_forget()
         if self.viewedData == True:
             self.datatypes.pack_forget()
             self.viewedData = False
-        self.last_row = False
+        self.last_col = False
 
         self.wait_var = tk.IntVar()
-        for i in range(self.row_amount):
+        for i in range(self.column_amount):
             if i != 0:
-                self.row_create.pack_forget()
-            self.row_create = tk.Frame(self.window)
+                self.column_create.pack_forget()
+            self.column_create = tk.Frame(self.window)
 
-            label1 = tk.Label(self.row_create, text="Enter the title and datatype of your row")
-            label2 = tk.Label(self.row_create, text=f"Row {i}")
-            label3 = tk.Label(self.row_create, text="Enter the name of your row")
-            label4 = tk.Label(self.row_create, text="Enter the datatype of your row")
+            label1 = tk.Label(self.column_create, text="Enter the title and datatype of your column")
+            label2 = tk.Label(self.column_create, text=f"Column {i}")
+            label3 = tk.Label(self.column_create, text="Enter the name of your column")
+            label4 = tk.Label(self.column_create, text="Enter the datatype of your column")
 
 
-            self.rowentry = tk.Entry(self.row_create, width=20)
-            self.row_datatype_entry = tk.Entry(self.row_create, width=20)
+            self.colentry = tk.Entry(self.column_create, width=20)
+            self.column_datatype_entry = tk.Entry(self.column_create, width=20)
 
-            button1 = tk.Button(self.row_create, text="View Datatypes", width=20,height=5,anchor="center", command=self.datatype_screen)
+            button1 = tk.Button(self.column_create, text="View Datatypes", width=20,height=5,anchor="center", command=self.datatype_screen)
 
-            button2 = tk.Button(self.row_create, text="Enter", width=20,height=5,anchor="center", command=self.row_list_build)
+            button2 = tk.Button(self.column_create, text="Enter", width=20,height=5,anchor="center", command=self.column_list_build)
             
-            if i == (self.row_amount-1):
-                self.last_row = True
+            if i == (self.column_amount-1):
+                self.last_col = True
 
             label1.grid(row=0, column=0, columnspan=3, sticky="n", pady=10)
             label2.grid(row=2, column=0, columnspan=3, sticky="n", pady=10)
             label3.grid(row=3, column=0, columnspan=3, sticky="n", pady=10)
             label4.grid(row=5, column=0, columnspan=3, sticky="n", pady=10)
 
-            self.rowentry.grid(row=4,column=0,columnspan=3,sticky="n",pady=10)
-            self.row_datatype_entry.grid(row=6,column=0,columnspan=3,sticky="n",pady=10)
+            self.colentry.grid(row=4,column=0,columnspan=3,sticky="n",pady=10)
+            self.column_datatype_entry.grid(row=6,column=0,columnspan=3,sticky="n",pady=10)
 
             button1.grid(row=1, column=0, columnspan=3, sticky="n", pady=10)
             button2.grid(row=7,column=0,columnspan=3,sticky="n",pady=10)
 
-            self.row_create.pack()
+            self.column_create.pack()
 
             button1.wait_variable(self.wait_var)
 
-    def row_list_build(self):
-        db_create = myDB()
-        row_name = self.rowentry.get()
-        row_datatype = self.row_datatype_entry.get()
-        self.row_list.append(row_name)
-        self.row_list.append(row_datatype)
-        print(self.row_list)
-        if self.last_row == True:
-            db_create.create_table(self.table_name,self.row_list,self.id_bool)
+    def column_list_build(self):
+        column_name = self.colentry.get()
+        column_datatype = self.column_datatype_entry.get()
+        self.col_list.append(column_name)
+        self.col_list.append(column_datatype)
+        print(self.col_list)
+        if self.last_col == True:
+            self.db_create.create_table(self.table_name,self.col_list,self.id_bool)
             if self.id_bool == True:
-                print(f"You have created a table with the name {self.table_name}, {self.row_amount} rows and ID autoincrement")
+                print(f"You have created a table with the name {self.table_name}, {self.column_amount} columns and ID autoincrement")
             if self.id_bool == False:
-                print(f"You have created a table with the name {self.table_name}, {self.row_amount} rows and no ID autoincrement")
+                print(f"You have created a table with the name {self.table_name}, {self.column_amount} columns and no ID autoincrement")
 
-            self.row_create.pack_forget()
+            self.column_create.pack_forget()
             self.main_menu.pack()
         else:
             self.wait_var.set(1)
@@ -111,7 +110,7 @@ class gui:
 
     
     def datatype_screen(self):
-            self.row_create.pack_forget()
+            self.column_create.pack_forget()
 
             self.datatypes = tk.Frame(self.window)
             
@@ -130,7 +129,7 @@ class gui:
             label13 = tk.Label(self.datatypes, text="JSON: Semi-structured text column that natively validates JavaScript Object Notation syntax")
             label13 = tk.Label(self.datatypes, text="VARBINARY(MAX) / BLOB: Stores raw unformatted binary byte streams")
 
-            button1 = tk.Button(self.datatypes, text="Return", width=20,height=5,anchor="center", command=self.row_creation)
+            button1 = tk.Button(self.datatypes, text="Return", width=20,height=5,anchor="center", command=self.column_creation)
 
             self.viewedData=True
 
@@ -154,30 +153,56 @@ class gui:
             
             
     def add_entry(self):
-        #Enter table name and row name then when you press the button it will take you to a page to input a value which will tell you the datatype of the row
+        #Enter table name and column name then when you press the button it will take you to a page to input a value which will tell you the datatype of the column
         self.main_menu.pack_forget()
         self.add_entries = tk.Frame(self.window)
 
         label1 = tk.Label(self.add_entries, text="Enter the title of the table you want to add an entry to")
-        entry1 = tk.Entry(self.add_entries, width=20)
-        label2 = tk.Label(self.add_entries, text="Enter the row you want to insert into")
-        entry2 = tk.Entry(self.add_entries, width=20)
-        button1 = tk.Button(self.add_entries, text="Enter", width=20,height=5,anchor="center")
-        
+        self.table_name_entry = tk.Entry(self.add_entries, width=20)
+        label2 = tk.Label(self.add_entries, text="Enter the column you want to insert into")
+        self.column_name_entry = tk.Entry(self.add_entries, width=20)
+        button1 = tk.Button(self.add_entries, text="Enter", width=20,height=5,anchor="center",command=self.get_table_and_col_name)
 
         label1.grid(row=0,column=0,columnspan=3,sticky="n",pady=10)
-        entry1.grid(row=1,column=0,columnspan=3,sticky="n",pady=10)
+        self.table_name_entry.grid(row=1,column=0,columnspan=3,sticky="n",pady=10)
         label2.grid(row=2,column=0,columnspan=3,sticky="n",pady=10)
-        entry2.grid(row=3,column=0,columnspan=3,sticky="n",pady=10)
+        self.column_name_entry.grid(row=3,column=0,columnspan=3,sticky="n",pady=10)
         button1.grid(row=4,column=0,columnspan=3,sticky="n",pady=10)
 
         self.add_entries.pack()
 
-    def insert_value(self):
-        query = "select type from pragma"
+    def get_table_and_col_name(self):
+        self.table_name = self.table_name_entry.get()
+        self.column_name = self.column_name_entry.get()
+        self.add_entries.pack_forget()
+        self.insert_value()
 
+    def insert_value(self):
+        datatype = self.db_create.datatype_get(self.table_name,self.column_name)
+
+        self.value_insert = tk.Frame(self.window)
+
+        label1 = tk.Label(self.value_insert, text=f"The datatype is for column {self.column_name} is: {datatype}")
+        label2 = tk.Label(self.value_insert, text="Enter your value")
+        self.value_entry = tk.Entry(self.value_insert, width=20)
+        button1 = tk.Button(self.value_insert, text="Enter", width=20,height=5,anchor="center",command=self.entry_adder)
+
+        label1.grid(row=0,column=0,columnspan=3,sticky="n",pady=10)
+        label2.grid(row=1,column=0,columnspan=3,sticky="n",pady=10)
+        self.value_entry.grid(row=2,column=0,columnspan=3,sticky="n",pady=10)
+        button1.grid(row=3,column=0,columnspan=3,sticky="n",pady=10)
+
+        self.value_insert.pack()
+
+    def entry_adder(self):
+        value = self.value_entry.get()
+        self.db_create.add_entries(self.table_name,self.column_name,value)
+        print(f"In the table {self.table_name}, you have added a row in the column {self.column_name} with the value {value}")
+        self.value_insert.pack_forget()
+        self.main_menu.pack()
 
     def __init__(self):
+        self.db_create = myDB()
         self.window = tk.Tk()
         self.window.title("Database Manager 9000")
         self.window.geometry("1000x675")

@@ -2,16 +2,16 @@ import sqlite3
 
 class myDB:
 
-    def create_table(self, table, rows, id_auto):
+    def create_table(self, table, columns, id_auto):
         # takes a list in the format [rowname, valuetype, rowname, valuetype, ...]
         # and converts it into a string in the form (rowname valuetype, rowname valuetype, ...)
         query_build = ''
         first_part=''
-        for i in range(0, len(rows), 2):
+        for i in range(0, len(columns), 2):
             if i == 0:
-                first_part = f'{rows[i]} {rows[i+1]}'
+                first_part = f'{columns[i]} {columns[i+1]}'
             else:
-                query_build += f', {rows[i]} {rows[i+1]}'
+                query_build += f', {columns[i]} {columns[i+1]}'
 
         if id_auto == True:    
             query = f'create table if not exists {table} (id integer primary key autoincrement, {first_part}{query_build});'
@@ -19,20 +19,20 @@ class myDB:
             query = f'create table if not exists {table} ({first_part}{query_build});'
         self.cursor.execute(query)
     
-    def add_entries(self, table, row_name, values):
-        query = f'insert into {table} ({row_name}) values ({values});'
+    def add_entries(self, table, column_name, values):
+        query = f'insert into {table} ({column_name}) values ({values});'
         self.cursor.execute(query)
 
-    def edit_entries(self, table, row, value, identifier, id_value):
+    def edit_entries(self, table, column, value, identifier, id_value):
         query = f"""
         UPDATE {table}
-        SET {row} = {value}
+        SET {column} = {value}
         WHERE {identifier} = {id_value};
         """
         self.cursor.execute(query)
 
-    def search_for_entries(self, table, row, value):
-        query = f'select * from {table} where {row}={value};'
+    def search_for_entries(self, table, column, value):
+        query = f'select * from {table} where {column}={value};'
         self.cursor.execute(query)
         result = self.cursor.fetchall()
 
