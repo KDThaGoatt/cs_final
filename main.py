@@ -5,6 +5,7 @@ from functions import myDB
 
 class gui:
     def create_table(self):
+        #gui maker for the create table function, lets you input table name, column amount, and true or false ID autoincrement
         self.main_menu.pack_forget()
 
         self.table_create = tk.Frame(self.window)
@@ -31,6 +32,7 @@ class gui:
 
 
     def get_values(self):
+        #special get function for table creation to make sure they are the correct datatypes
         self.viewedData = False
         self.table_name = self.name_entry.get()
         try:
@@ -45,6 +47,8 @@ class gui:
         
 
     def column_creation(self):
+        #looped gui function that uses tk.IntVar to iterate the loops when you press the button
+        #This function creates a list in the format [value,datatype,value,datatype,...]
         self.col_list = []
         self.table_create.pack_forget()
         if self.viewedData == True:
@@ -59,7 +63,7 @@ class gui:
             self.column_create = tk.Frame(self.window)
 
             label1 = tk.Label(self.column_create, text="Enter the title and datatype of your column")
-            label2 = tk.Label(self.column_create, text=f"Column {i}")
+            label2 = tk.Label(self.column_create, text=f"Column {i+1}")
             label3 = tk.Label(self.column_create, text="Enter the name of your column")
             label4 = tk.Label(self.column_create, text="Enter the datatype of your column")
 
@@ -90,11 +94,11 @@ class gui:
             button1.wait_variable(self.wait_var)
 
     def column_list_build(self):
+        #appends the values to create the list
         column_name = self.colentry.get()
         column_datatype = self.column_datatype_entry.get()
         self.col_list.append(column_name)
         self.col_list.append(column_datatype)
-        print(self.col_list)
         if self.last_col == True:
             self.db_create.create_table(self.table_name,self.col_list,self.id_bool)
             if self.id_bool == True:
@@ -110,6 +114,7 @@ class gui:
 
     
     def datatype_screen(self):
+            #A screen available in the table creation process that shows you all the different datatypes and when to use them
             self.column_create.pack_forget()
 
             self.datatypes = tk.Frame(self.window)
@@ -178,6 +183,8 @@ class gui:
         self.insert_value()
 
     def insert_value(self):
+        #Page where you insert the value for the column you chose
+        #this page also tells you what datatype the column is so you dont input the wrong one by accident
         datatype = self.db_create.datatype_get(self.table_name,self.column_name)
 
         self.value_insert = tk.Frame(self.window)
@@ -195,11 +202,90 @@ class gui:
         self.value_insert.pack()
 
     def entry_adder(self):
+        #function to actually add the entries 
         value = self.value_entry.get()
         self.db_create.add_entries(self.table_name,self.column_name,value)
         print(f"In the table {self.table_name}, you have added a row in the column {self.column_name} with the value {value}")
         self.value_insert.pack_forget()
         self.main_menu.pack()
+
+    def entry_edit(self):
+        #gui function for editing entries
+        self.main_menu.pack_forget()
+        self.edit_main = tk.Frame(self.window)
+
+        label1 = tk.Label(self.edit_main,text="Enter the table you want to edit from")
+        self.table_name_entry = tk.Entry(self.edit_main,width=20)
+        label2 = tk.Label(self.edit_main,text="Enter the column you want to edit from")
+        self.column_name_entry = tk.Entry(self.edit_main,width=20)
+        label3 = tk.Label(self.edit_main,text="Enter what identifier you will use (could be the value or id)")
+        self.identifier_entry = tk.Entry(self.edit_main,width=20)
+        label4 = tk.Label(self.edit_main,text="Enter what value the identifier should have to be edited")
+        self.id_value_entry = tk.Entry(self.edit_main,width=20)
+        label5 = tk.Label(self.edit_main,text="Enter the value you want to change to")
+        self.value_entry = tk.Entry(self.edit_main,width=20)
+        button1 = tk.Button(self.edit_main, text="Enter", width=20,height=5,anchor="center",command=self.edit_adder)
+
+        label1.grid(row=0,column=0,columnspan=3,sticky="n", pady=10)
+        self.table_name_entry.grid(row=1,column=0,columnspan=3,sticky="n", pady=10)
+        label2.grid(row=2,column=0,columnspan=3,sticky="n", pady=10)
+        self.column_name_entry.grid(row=3,column=0,columnspan=3,sticky="n", pady=10)
+        label3.grid(row=4,column=0,columnspan=3,sticky="n", pady=10)
+        self.identifier_entry.grid(row=5,column=0,columnspan=3,sticky="n", pady=10)
+        label4.grid(row=6,column=0,columnspan=3,sticky="n", pady=10)
+        self.id_value_entry.grid(row=7,column=0,columnspan=3,sticky="n", pady=10)
+        label5.grid(row=8,column=0,columnspan=3,sticky="n", pady=10)
+        self.value_entry.grid(row=9,column=0,columnspan=3,sticky="n", pady=10)
+        button1.grid(row=10,column=0,columnspan=3,sticky="n", pady=10)
+
+        self.edit_main.pack()
+
+    def edit_adder(self):
+        #actually adds the entries to the database
+        table_name = self.table_name_entry.get()
+        column_name = self.column_name_entry.get()
+        identifier = self.identifier_entry.get()
+        id_value = self.id_value_entry.get()
+        value = self.value_entry.get()
+        self.db_create.edit_entries(table_name,column_name,value,identifier,id_value)
+        print(f"You have edited the value for the column {column_name} in the table {table_name} to {value} when {identifier} is {id_value}")
+        self.edit_main.pack_forget()
+        self.main_menu.pack()
+
+    def search_entries(self):
+        #gui function for searching for entries
+        self.main_menu.pack_forget()
+        self.search_main = tk.Frame(self.window)
+
+        label1 = tk.Label(self.search_main,text="Enter the table to search in")
+        self.table_name_entry = tk.Entry(self.search_main,width=20)
+        label2 = tk.Label(self.search_main,text="Enter the column to search in")
+        self.column_name_entry = tk.Entry(self.search_main,width=20)
+        label3 = tk.Label(self.search_main,text="Enter the value to search for") 
+        self.value_entry = tk.Entry(self.search_main,width=20)
+        button1 = tk.Button(self.search_main, text="Enter", width=20,height=5,anchor="center",command=self.search)
+
+        label1.grid(row=0,column=0,columnspan=3,sticky="n",pady=10)
+        self.table_name_entry.grid(row=1,column=0,columnspan=3,sticky="n",pady=10)
+        label2.grid(row=2,column=0,columnspan=3,sticky="n",pady=10)
+        self.column_name_entry.grid(row=3,column=0,columnspan=3,sticky="n",pady=10)
+        label3.grid(row=4,column=0,columnspan=3,sticky="n",pady=10)
+        self.value_entry.grid(row=5,column=0,columnspan=3,sticky="n",pady=10)
+        button1.grid(row=6,column=0,columnspan=3,sticky="n",pady=10)
+
+        self.search_main.pack()
+
+    def search(self):
+        #function that actually searches for the entries and displays it on the screen
+        table_name = self.table_name_entry.get()
+        column_name = self.column_name_entry.get()
+        value = self.value_entry.get()
+        self.db_create.search_for_entries(table_name,column_name,value)
+        self.search_main.pack_forget() 
+
+        self.search_display = tk.Frame(self.window)
+        
+
 
     def __init__(self):
         self.db_create = myDB()
@@ -215,8 +301,8 @@ class gui:
 
         button1 = tk.Button(self.main_menu, text="Create Tables", width=20, height=5, anchor="center", command=self.create_table)
         button2 = tk.Button(self.main_menu, text="Add Entries", width=20, height=5, anchor="center", command=self.add_entry)
-        button3 = tk.Button(self.main_menu, text="Edit Entries", width=20, height=5, anchor="center")
-        button4 = tk.Button(self.main_menu, text="Search For Entries", width=20, height=5, anchor="center")
+        button3 = tk.Button(self.main_menu, text="Edit Entries", width=20, height=5, anchor="center",command=self.entry_edit)
+        button4 = tk.Button(self.main_menu, text="Search For Entries", width=20, height=5, anchor="center",command=self.search_entries)
 
         label1.grid(row=0,column=0,columnspan=3,sticky="n",pady=10)
         button1.grid(row=1, column=0, padx=10,pady=10)

@@ -35,6 +35,7 @@ class myDB:
         query = f'select * from {table} where {column}={value};'
         self.cursor.execute(query)
         result = self.cursor.fetchall()
+        return result
 
     def datatype_get(self,table,col_name):
         self.cursor.execute(f"PRAGMA table_info({table})")
