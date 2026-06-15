@@ -19,8 +19,8 @@ class myDB:
             query = f'create table if not exists {table} ({first_part}{query_build});'
         self.cursor.execute(query)
     
-    def add_entries(self, table, column_name, value):
-        query = f"insert into {table} ({column_name}) values ('{value}');"
+    def add_entries(self, table, columns, values):
+        query = f"insert into {table} {columns} values {values};"
         self.cursor.execute(query)
         self.connection.commit()
 
@@ -44,11 +44,26 @@ class myDB:
         return result
 
     def datatype_get(self,table,col_name):
-        self.cursor.execute(f"PRAGMA table_info({table})")
+        self.cursor.execute(f"PRAGMA table_info({table});")
         columns = self.cursor.fetchall()
         for col in columns:
             if col[1] == col_name:
                 return col[2]
+    
+    def col_amount_get(self,table):
+        self.cursor.execute(f"SELECT * FROM {table} LIMIT 0;")
+        amount = len(self.cursor.description)
+        return amount
+    
+    def col_name_get(self,table,cid):
+        self.cursor.execute(f"SELECT name FROM pragma_table_info('{table}') WHERE cid = {cid};")
+        row = self.cursor.fetchone()
+        if row:
+            name = row[0]
+        else:
+            print("Column id not found")
+            
+        return name
 
 
     def __init__(self):

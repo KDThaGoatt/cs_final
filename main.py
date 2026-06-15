@@ -164,50 +164,75 @@ class gui:
 
         label1 = tk.Label(self.add_entries, text="Enter the title of the table you want to add an entry to")
         self.table_name_entry = tk.Entry(self.add_entries, width=20)
-        label2 = tk.Label(self.add_entries, text="Enter the column you want to insert into")
-        self.column_name_entry = tk.Entry(self.add_entries, width=20)
         button1 = tk.Button(self.add_entries, text="Enter", width=20,height=5,anchor="center",command=self.get_table_and_col_name)
 
         label1.grid(row=0,column=0,columnspan=3,sticky="n",pady=10)
         self.table_name_entry.grid(row=1,column=0,columnspan=3,sticky="n",pady=10)
-        label2.grid(row=2,column=0,columnspan=3,sticky="n",pady=10)
-        self.column_name_entry.grid(row=3,column=0,columnspan=3,sticky="n",pady=10)
         button1.grid(row=4,column=0,columnspan=3,sticky="n",pady=10)
 
         self.add_entries.pack()
 
     def get_table_and_col_name(self):
         self.table_name = self.table_name_entry.get()
-        self.column_name = self.column_name_entry.get()
+        self.column_amount = self.db_create.col_amount_get(self.table_name)
         self.add_entries.pack_forget()
         self.insert_value()
 
     def insert_value(self):
-        #Page where you insert the value for the column you chose
+        #Page where you insert the value for each column using a for loop
         #this page also tells you what datatype the column is so you dont input the wrong one by accident
-        datatype = self.db_create.datatype_get(self.table_name,self.column_name)
 
-        self.value_insert = tk.Frame(self.window)
+        self.wait_var = tk.IntVar()
+        self.last_col = False
+        self.col_list = []
+        self.val_list = []
+        for i in range(1,self.column_amount):
+            if i == self.column_amount-1:
+                self.last_col = True
+            else:
+                self.last_col = False
 
-        label1 = tk.Label(self.value_insert, text=f"The datatype is for column {self.column_name} is: {datatype}")
-        label2 = tk.Label(self.value_insert, text="Enter your value")
-        self.value_entry = tk.Entry(self.value_insert, width=20)
-        button1 = tk.Button(self.value_insert, text="Enter", width=20,height=5,anchor="center",command=self.entry_adder)
+            self.column_name = self.db_create.col_name_get(self.table_name,i)
 
-        label1.grid(row=0,column=0,columnspan=3,sticky="n",pady=10)
-        label2.grid(row=1,column=0,columnspan=3,sticky="n",pady=10)
-        self.value_entry.grid(row=2,column=0,columnspan=3,sticky="n",pady=10)
-        button1.grid(row=3,column=0,columnspan=3,sticky="n",pady=10)
+            datatype = self.db_create.datatype_get(self.table_name,self.column_name)
 
-        self.value_insert.pack()
+            self.value_insert = tk.Frame(self.window)
+
+            label1 = tk.Label(self.value_insert, text=f"The datatype is for column {self.column_name} (cid = {i}) is: {datatype}")
+            label2 = tk.Label(self.value_insert, text="Enter your value")
+            self.value_entry = tk.Entry(self.value_insert, width=20)
+            button1 = tk.Button(self.value_insert, text="Enter", width=20,height=5,anchor="center",command=self.entry_adder)
+
+            label1.grid(row=0,column=0,columnspan=3,sticky="n",pady=10)
+            label2.grid(row=1,column=0,columnspan=3,sticky="n",pady=10)
+            self.value_entry.grid(row=2,column=0,columnspan=3,sticky="n",pady=10)
+            button1.grid(row=3,column=0,columnspan=3,sticky="n",pady=10)
+
+            self.value_insert.pack()
+
+            button1.wait_variable(self.wait_var)
 
     def entry_adder(self):
         #function to actually add the entries 
         value = self.value_entry.get()
-        self.db_create.add_entries(self.table_name,self.column_name,value)
-        print(f"In the table {self.table_name}, you have added a row in the column {self.column_name} with the value {value}")
-        self.value_insert.pack_forget()
-        self.main_menu.pack()
+        try:
+            value = int(value)
+        except:
+            value = str(value)
+        self.val_list.append(value)
+        self.col_list.append(self.column_name)
+
+
+        if self.last_col == True:
+            val_tuple = tuple(self.val_list)
+            col_tuple = tuple(self.col_list)
+            self.db_create.add_entries(self.table_name,col_tuple,val_tuple)
+            print(f"In the table {self.table_name}, you have added a row in the columns {self.col_list} with the values {self.val_list}")
+            self.value_insert.pack_forget()
+            self.main_menu.pack()
+        else:
+            self.value_insert.pack_forget()
+            self.wait_var.set(1)
 
     def entry_edit(self):
         #gui function for editing entries
