@@ -19,9 +19,10 @@ class myDB:
             query = f'create table if not exists {table} ({first_part}{query_build});'
         self.cursor.execute(query)
     
-    def add_entries(self, table, column_name, values):
-        query = f'insert into {table} ({column_name}) values ({values});'
+    def add_entries(self, table, column_name, value):
+        query = f"insert into {table} ({column_name}) values ('{value}');"
         self.cursor.execute(query)
+        self.connection.commit()
 
     def edit_entries(self, table, column, value, identifier, id_value):
         query = f"""
@@ -30,9 +31,14 @@ class myDB:
         WHERE {identifier} = {id_value};
         """
         self.cursor.execute(query)
+        self.connection.commit()
 
     def search_for_entries(self, table, column, value):
-        query = f'select * from {table} where {column}={value};'
+        try:
+            value = str(value)
+            query = f"select * from {table} where {column}='{value}';"
+        except:
+            query = f'select * from {table} where {column}={value};'
         self.cursor.execute(query)
         result = self.cursor.fetchall()
         return result

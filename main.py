@@ -280,11 +280,23 @@ class gui:
         table_name = self.table_name_entry.get()
         column_name = self.column_name_entry.get()
         value = self.value_entry.get()
-        self.db_create.search_for_entries(table_name,column_name,value)
+        data = self.db_create.search_for_entries(table_name,column_name,value)
         self.search_main.pack_forget() 
 
         self.search_display = tk.Frame(self.window)
-        
+
+        label1 = tk.Label(self.search_display,text="Here is your data:")
+        label2 = tk.Label(self.search_display,text=f"{data}")
+        button1 = tk.Button(self.search_display,text="Continue", width=20,height=5,anchor="center",command=self.main_menu_return)
+
+        label1.grid(row=0,column=0,columnspan=3,sticky="n",pady=10)
+        label2.grid(row=1,column=0,columnspan=3,sticky="n",pady=10)
+        button1.grid(row=2,column=0,columnspan=3,sticky="n",pady=10)
+        self.search_display.pack()
+
+    def main_menu_return(self):
+        self.search_display.pack_forget()
+        self.main_menu.pack()
 
 
     def __init__(self):
