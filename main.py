@@ -266,7 +266,7 @@ class gui:
         self.edit_main.pack()
 
     def edit_adder(self):
-        #actually adds the entries to the database
+        #actually adds the edits to the database
         table_name = self.table_name_entry.get()
         column_name = self.column_name_entry.get()
         identifier = self.identifier_entry.get()

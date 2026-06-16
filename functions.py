@@ -25,11 +25,19 @@ class myDB:
         self.connection.commit()
 
     def edit_entries(self, table, column, value, identifier, id_value):
-        query = f"""
-        UPDATE {table}
-        SET {column} = {value}
-        WHERE {identifier} = {id_value};
-        """
+        try:
+            value = int(value)
+            query = f"""
+            UPDATE {table}
+            SET {column} = {value}
+            WHERE {identifier} = {id_value};
+            """
+        except:
+            query = f"""
+            UPDATE {table}
+            SET {column} = '{value}'
+            WHERE {identifier} = {id_value};
+            """
         self.cursor.execute(query)
         self.connection.commit()
 
